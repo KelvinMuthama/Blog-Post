@@ -4,9 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 from blog_post.config import Config
-
-
-
+from flask_migrate import Migrate
 
 
 db = SQLAlchemy()
@@ -15,6 +13,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 mail = Mail()
+migrate = Migrate(db)
 
 
 def create_app(config_class=Config):
@@ -25,11 +24,12 @@ def create_app(config_class=Config):
     bcrypt.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    migrate.init_app(app)
 
     from blog_post.users.routes import users
     from blog_post.posts.routes import posts
     from blog_post.main.routes import main
-    from blog_post.errors.handlers import errors  
+    from blog_post.errors.handlers import errors
     app.register_blueprint(users)
     app.register_blueprint(posts)
     app.register_blueprint(main)
